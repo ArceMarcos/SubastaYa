@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SubastaYa.Data;
+using SubastaYa.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
+
+builder.Services.AddHostedService<CierreSubastasService>();
 
 var app = builder.Build();
 
