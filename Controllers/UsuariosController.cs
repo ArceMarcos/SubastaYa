@@ -71,33 +71,41 @@ public class UsuariosController : ControllerBase
             UsuarioId = nuevoUsuario.Id 
         });
     }
-
-    [HttpPost("{id}/depositar")]
-public async Task<IActionResult> Depositar(int id, [FromBody] DepositoRequest peticion)
+[Authorize] // Exigimos el Token
+[HttpPost("depositar")] // La URL ahora será simplemente /api/usuarios/depositar
+public async Task<IActionResult> Depositar([FromBody] DepositoRequest peticion)
 {
-    if (peticion.Monto <= 0) 
+    // 1. Extraemos el ID del dueño del token
+    var idReclamado = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    
+    if (!int.TryParse(idReclamado, out int usuarioIdSeguro))
+        return Unauthorized("Token inválido o corrupto.");
+
+    if (peticion.Monto <= 0)
         return BadRequest("El monto a depositar debe ser mayor a cero.");
 
-    // Buscamos al usuario e incluimos su billetera vinculada en la misma consulta
+    // 2. Buscamos al usuario y su billetera usando el ID seguro
     var usuario = await _context.Usuarios
         .Include(u => u.Billetera)
-        .FirstOrDefaultAsync(u => u.Id == id);
+        .FirstOrDefaultAsync(u => u.Id == usuarioIdSeguro);
 
-    if (usuario == null || usuario.Billetera == null) 
-        return NotFound("Usuario no encontrado.");
+    if (usuario == null || usuario.Billetera == null)
+        return NotFound("Usuario o billetera no encontrados.");
 
-    // Acreditamos el dinero
-    usuario.Billetera.SaldoTotal += peticion.Monto;
+    // 3. Sumamos el dinero
     usuario.Billetera.SaldoDisponible += peticion.Monto;
+    usuario.Billetera.SaldoTotal += peticion.Monto;
 
     await _context.SaveChangesAsync();
 
     return Ok(new 
     { 
         Mensaje = "Depósito exitoso", 
-        SaldoDisponible = usuario.Billetera.SaldoDisponible 
+        NuevoSaldo = usuario.Billetera.SaldoDisponible 
     });
 }
+
+
 }
 public class DepositoRequest
 {

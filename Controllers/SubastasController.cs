@@ -35,41 +35,47 @@ public async Task<IActionResult> ObtenerSubastasActivas()
     return Ok(subastas);
 }
 
-    [HttpPost]
-    public async Task<IActionResult> CrearSubasta([FromBody] CrearSubastaRequest peticion)
+[Authorize] // Exige Token JWT
+[HttpPost]
+public async Task<IActionResult> CrearSubasta([FromBody] CrearSubastaRequest peticion)
+{
+    // 1. Extraemos el ID del usuario desde el Token
+    var idReclamado = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    
+    if (!int.TryParse(idReclamado, out int vendedorIdSeguro))
+        return Unauthorized("Token inválido o corrupto.");
+
+    // 2. Buscamos al vendedor para validar que exista
+    var vendedor = await _context.Usuarios.FindAsync(vendedorIdSeguro);
+    if (vendedor == null)
+        return NotFound("Vendedor no encontrado.");
+
+    // 3. Creamos el artículo
+    var nuevoArticulo = new Articulo
     {
-        var vendedor = await _context.Usuarios.FindAsync(peticion.VendedorId);
-        if (vendedor == null) 
-            return NotFound("Vendedor no encontrado.");
+        Nombre = peticion.NombreArticulo,
+        Descripcion = peticion.DescripcionArticulo
+    };
+    _context.Articulos.Add(nuevoArticulo);
+    await _context.SaveChangesAsync();
 
-        if (peticion.PrecioBase < 0)
-            return BadRequest("El precio base no puede ser negativo.");
+    // 4. Creamos la subasta (usando el ID seguro del token)
+    var nuevaSubasta = new Subasta
+    {
+        VendedorId = vendedorIdSeguro,
+        ArticuloId = nuevoArticulo.Id,
+        PrecioBase = peticion.PrecioBase,
+        PrecioActual = peticion.PrecioBase,
+        FechaInicio = DateTime.UtcNow,
+        FechaFin = peticion.FechaFin,
+        Activa = true
+    };
 
-        var nuevaSubasta = new Subasta
-        {
-            Articulo = new Articulo
-            {
-                Nombre = peticion.NombreArticulo,
-                Descripcion = peticion.DescripcionArticulo
-            },
-            VendedorId = peticion.VendedorId,
-            PrecioBase = peticion.PrecioBase,
-            PrecioActual = peticion.PrecioBase,
-            FechaInicio = DateTime.UtcNow,
-            FechaFin = peticion.FechaFin,
-            Activa = true
-        };
+    _context.Subastas.Add(nuevaSubasta);
+    await _context.SaveChangesAsync();
 
-        _context.Subastas.Add(nuevaSubasta);
-        await _context.SaveChangesAsync();
-
-        return Ok(new 
-        { 
-            Mensaje = "Subasta publicada con éxito", 
-            SubastaId = nuevaSubasta.Id,
-            ArticuloId = nuevaSubasta.Articulo.Id
-        });
-    }
+    return CreatedAtAction(nameof(CrearSubasta), new { id = nuevaSubasta.Id }, nuevaSubasta);
+}
 
     [Authorize]
     [HttpPost("{id}/pujar")]
@@ -150,7 +156,6 @@ public async Task<IActionResult> ObtenerSubastasActivas()
 // DTOs
 public class CrearSubastaRequest
 {
-    public int VendedorId { get; set; }
     public string NombreArticulo { get; set; } = string.Empty;
     public string DescripcionArticulo { get; set; } = string.Empty;
     public decimal PrecioBase { get; set; }
