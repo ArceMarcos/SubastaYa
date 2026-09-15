@@ -2,7 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using SubastaYa.Data;
 using SubastaYa.Models;
 using Microsoft.EntityFrameworkCore;
-
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 namespace SubastaYa.Controllers;
 
 [Route("api/[controller]")]
@@ -15,6 +19,37 @@ public class UsuariosController : ControllerBase
     {
         _context = context;
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest peticion)
+    {
+    // 1. Buscamos al usuario por correo y contraseña (sin encriptar por ahora para simplificar el TP)
+    var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => 
+        u.CorreoElectronico == peticion.CorreoElectronico && 
+        u.ContrasenaHash == peticion.Contrasena);
+
+    if (usuario == null) 
+        return Unauthorized("Credenciales incorrectas.");
+
+    // 2. Si es válido, preparamos la información que irá dentro del token (el ID del usuario)
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var key = Encoding.UTF8.GetBytes("SubastaYa_ClaveSuperSecreta_IngenieriaSoftware_2026_UNAJ");
+    
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+        Subject = new ClaimsIdentity(new[] 
+        {
+            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+            new Claim(ClaimTypes.Email, usuario.CorreoElectronico)
+        }),
+        Expires = DateTime.UtcNow.AddHours(2), // El token durará 2 horas
+        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+    };
+
+    // 3. Generamos el token y se lo mandamos
+    var token = tokenHandler.CreateToken(tokenDescriptor);
+    return Ok(new { Token = tokenHandler.WriteToken(token) });
+}
 
     [HttpPost("registro")]
     public async Task<IActionResult> RegistrarUsuario([FromBody] Usuario nuevoUsuario)
@@ -67,4 +102,10 @@ public async Task<IActionResult> Depositar(int id, [FromBody] DepositoRequest pe
 public class DepositoRequest
 {
     public decimal Monto { get; set; }
+}
+
+public class LoginRequest
+{
+    public string CorreoElectronico { get; set; } = string.Empty;
+    public string Contrasena { get; set; } = string.Empty;
 }
