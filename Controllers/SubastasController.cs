@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SubastaYa.Data;
 using SubastaYa.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SubastaYa.Controllers;
 
@@ -15,6 +16,24 @@ public class SubastasController : ControllerBase
     {
         _context = context;
     }
+
+    [HttpGet]
+public async Task<IActionResult> ObtenerSubastasActivas()
+{
+    var subastas = await _context.Subastas
+        .Include(s => s.Articulo)
+        .Where(s => s.Activa && s.FechaFin > DateTime.UtcNow)
+        .Select(s => new {
+            s.Id,
+            s.Articulo.Nombre,
+            s.Articulo.Descripcion,
+            s.PrecioActual,
+            s.FechaFin
+        })
+        .ToListAsync();
+
+    return Ok(subastas);
+}
 
     [HttpPost]
     public async Task<IActionResult> CrearSubasta([FromBody] CrearSubastaRequest peticion)

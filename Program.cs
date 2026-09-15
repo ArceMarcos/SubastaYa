@@ -12,6 +12,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
+
+// Permitir que el frontend se comunique con la API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddHostedService<CierreSubastasService>();
 
 // --- NUEVO: CONFIGURACIÓN JWT ---
@@ -31,6 +43,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // ---------------------------------
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated(); // Crea las tablas basándose en tus modelos
+}
+
+app.UseCors("PermitirFrontend");
 
 // --- NUEVO: ACTIVAR AUTENTICACIÓN ---
 app.UseAuthentication(); 
