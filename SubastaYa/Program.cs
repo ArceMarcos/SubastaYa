@@ -26,7 +26,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddHostedService<CierreSubastasService>();
 
-// --- NUEVO: CONFIGURACIÓN JWT ---
+// CONFIGURACIÓN JWT ---
 var claveSecreta = "SubastaYa_ClaveSuperSecreta_IngenieriaSoftware_2026_UNAJ";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -47,12 +47,12 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated(); // Crea las tablas basándose en tus modelos
+    db.Database.EnsureCreated(); // Crea las tablas de los modelos
 }
 
 app.UseCors("PermitirFrontend");
 
-// --- NUEVO: ACTIVAR AUTENTICACIÓN ---
+// AUTENTICACIÓN
 app.UseAuthentication(); 
 app.UseAuthorization();
 

@@ -23,7 +23,6 @@ public class UsuariosController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest peticion)
     {
-    // 1. Buscamos al usuario por correo y contraseña (sin encriptar por ahora para simplificar el TP)
     var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => 
         u.CorreoElectronico == peticion.CorreoElectronico && 
         u.ContrasenaHash == peticion.Contrasena);
@@ -42,7 +41,7 @@ public class UsuariosController : ControllerBase
             new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
             new Claim(ClaimTypes.Email, usuario.CorreoElectronico)
         }),
-        Expires = DateTime.UtcNow.AddHours(2), // El token durará 2 horas
+        Expires = DateTime.UtcNow.AddHours(2), // El token dura 2 horas
         SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
     };
 
@@ -72,7 +71,7 @@ public class UsuariosController : ControllerBase
         });
     }
 
-    [Authorize]
+[Authorize]
 [HttpGet("billetera")]
 public async Task<IActionResult> ObtenerMiBilletera()
 {
