@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubastaYa - Registro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Crear Cuenta</h1>
+        <p>Únete a SubastaYa</p>
+        
+        <form id="formRegistro">
+            <div class="input-group">
+                <label for="nombre">Nombre Completo</label>
+                <input type="text" id="nombre" required placeholder="Ej: Juan Pérez">
+            </div>
+
+            <div class="input-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" required placeholder="ejemplo@unaj.edu.ar">
+            </div>
+            
+            <div class="input-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" required placeholder="********">
+            </div>
+            
+            <button type="submit" style="background-color: #059669;">Registrarse</button>
+        </form>
+        
+        <div id="mensajeError" class="error-oculto">Error al registrar. Intenta de nuevo.</div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="index.html" style="color: #2563eb; text-decoration: none;">¿Ya tienes cuenta? Inicia sesión aquí</a>
+        </div>
+    </div>
+
+    <script src="registro.js"></script>
+</body>
+</html>

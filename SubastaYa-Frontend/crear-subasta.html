@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SubastaYa - Publicar Artículo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-header">
+        <h2>Publicar Nueva Subasta</h2>
+        <div>
+            <button onclick="window.location.href='subastas.html'" style="background-color: #6b7280; margin-right: 10px;">Volver al Panel</button>
+            <button onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+    
+    <div class="login-container" style="max-width: 500px; margin-top: 20px;">
+        <form id="formCrearSubasta">
+            <div class="input-group">
+                <label for="nombre">Nombre del Artículo</label>
+                <input type="text" id="nombre" required placeholder="Ej: Monitor Gamer 24 pulgadas">
+            </div>
+            
+            <div class="input-group">
+                <label for="descripcion">Descripción</label>
+                <input type="text" id="descripcion" required placeholder="Detalles, estado, marca...">
+            </div>
+
+            <div class="input-group">
+                <label for="precio">Precio Base ($)</label>
+                <input type="number" id="precio" step="0.01" required min="1" placeholder="Ej: 50000">
+            </div>
+
+            <div class="input-group">
+                <label for="fecha">Fecha y Hora de Finalización</label>
+                <input type="datetime-local" id="fecha" required>
+            </div>
+            
+            <button type="submit" style="background-color: #059669;">Publicar Subasta</button>
+        </form>
+    </div>
+
+    <script src="crear-subasta.js"></script>
+</body>
+</html>

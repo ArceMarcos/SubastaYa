@@ -71,6 +71,28 @@ public class UsuariosController : ControllerBase
             UsuarioId = nuevoUsuario.Id 
         });
     }
+
+    [Authorize]
+[HttpGet("billetera")]
+public async Task<IActionResult> ObtenerMiBilletera()
+{
+    var idReclamado = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    if (!int.TryParse(idReclamado, out int usuarioId)) 
+        return Unauthorized("Token inválido.");
+
+    var usuario = await _context.Usuarios
+        .Include(u => u.Billetera)
+        .FirstOrDefaultAsync(u => u.Id == usuarioId);
+        
+    if (usuario == null || usuario.Billetera == null) 
+        return NotFound("Billetera no encontrada.");
+
+    return Ok(new {
+        saldoDisponible = usuario.Billetera.SaldoDisponible,
+        saldoRetenido = usuario.Billetera.SaldoRetenido
+    });
+}
+
 [Authorize] // Exigimos el Token
 [HttpPost("depositar")] // La URL ahora será simplemente /api/usuarios/depositar
 public async Task<IActionResult> Depositar([FromBody] DepositoRequest peticion)
@@ -117,3 +139,4 @@ public class LoginRequest
     public string CorreoElectronico { get; set; } = string.Empty;
     public string Contrasena { get; set; } = string.Empty;
 }
+

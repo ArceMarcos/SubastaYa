@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SubastaYa - Mi Billetera</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-header">
+        <h2>Mi Billetera</h2>
+        <div>
+            <button onclick="window.location.href='subastas.html'" style="background-color: #6b7280; margin-right: 10px;">Volver al Panel</button>
+            <button onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+    
+    <div class="login-container" style="max-width: 500px; margin-top: 20px;">
+        <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+            <h3 style="margin: 0; color: #374151;">Saldo Disponible</h3>
+            <h1 id="saldoDisponible" style="margin: 10px 0; color: #047857;">$0.00</h1>
+            <p style="margin: 0; color: #6b7280; font-size: 0.9em;">Saldo Retenido en pujas: <span id="saldoRetenido">$0.00</span></p>
+        </div>
+
+        <form id="formDepositar">
+            <div class="input-group">
+                <label for="monto">Ingresar Dinero ($)</label>
+                <input type="number" id="monto" step="0.01" required min="1" placeholder="Ej: 10000">
+            </div>
+            <button type="submit" style="background-color: #2563eb;">Depositar</button>
+        </form>
+    </div>
+
+    <script src="billetera.js"></script>
+</body>
+</html>

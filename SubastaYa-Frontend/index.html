@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubastaYa - Iniciar Sesión</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>SubastaYa</h1>
+        <p>Ingresa para comenzar a pujar</p>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" required placeholder="ejemplo@unaj.edu.ar">
+            </div>
+            
+            <div class="input-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" required placeholder="********">
+            </div>
+            
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+        
+        <div id="mensajeError" class="error-oculto">Credenciales incorrectas.</div>
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="registro.html" style="color: #2563eb; text-decoration: none;">¿No tienes cuenta? Regístrate aquí</a>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

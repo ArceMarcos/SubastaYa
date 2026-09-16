@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SubastaYa - Panel Principal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-header">
+        <h2>Subastas Activas</h2>
+        <button onclick="window.location.href='crear-subasta.html'" style="background-color: #059669; margin-right: 10px;">+ Vender Artículo</button>
+        <button onclick="window.location.href='billetera.html'" style="background-color: #2563eb; margin-right: 10px;">Mi Billetera</button>
+        <button onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+    
+    <div id="contenedor-subastas" class="grid-subastas">
+        <!-- Aquí JavaScript inyectará las tarjetas de las subastas -->
+        <p>Cargando subastas...</p>
+    </div>
+
+    <script src="subastas.js"></script>
+</body>
+</html>
