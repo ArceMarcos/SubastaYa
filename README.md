@@ -13,10 +13,10 @@ Tecnologias utilizadas:
 
 Requisitos previos: Tener instalado [Docker Desktop](https://www.docker.com/products/docker-desktop/) y Git.
 
-   ```bash
-   git clone [https://github.com/ArceMarcos/SubastaYa.git](https://github.com/ArceMarcos/SubastaYa.git)
-   cd subasta
-   docker-compose up --build -d
+```bash
+git clone https://github.com/ArceMarcos/SubastaYa.git
+cd SubastaYa
+docker compose up --build -d
 
 Para realizar una prueba de concurrencia se utilizo el siguiente script:
 
@@ -52,3 +52,11 @@ Promise.all([peticion1, peticion2])
         console.log(`Usuario 1 (Código ${respuestas[0].status}):`, texto1);
         console.log(`Usuario 2 (Código ${respuestas[1].status}):`, texto2);
     });
+
+Las funcionalidades principales son:
+
+Gestión de Identidad y Seguridad: Registro de nuevas cuentas e inicio de sesión protegido mediante validación de tokens JWT.
+Billetera Virtual Integrada: Consulta al instante del saldo disponible y el saldo retenido en pujas activas, con la capacidad de depositar nuevos fondos.
+Publicación de Subastas: Creación de nuevos artículos para la venta, definiendo nombre, descripción, precio base y fecha u hora de finalización.
+Motor de Ofertas Seguro: Procesamiento de pujas que descuenta el saldo automáticamente y utiliza concurrencia optimista para evitar conflictos si múltiples usuarios ofertan en el mismo milisegundo.
+Cierre Automatizado: Servicio en segundo plano que monitorea constantemente la base de datos para finalizar las subastas vencidas y adjudicar al ganador sin necesidad de intervención manual.
